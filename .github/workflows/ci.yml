@@ -32,4 +32,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker build -f deploy/Dockerfile -t assistant:ci .
-      - run: docker run --rm -d -p 8787:8787 --name a assistant:ci && sleep 4 && curl -fsS localhost:8787/health && docker stop a
+      - run: docker run -d --name a assistant:ci && sleep 5 && docker exec a wget -qO- http://localhost:8787/health
+      - if: failure()
+        run: docker logs a 2>&1 | tail -50 | sed 's/^/::error::/' || true

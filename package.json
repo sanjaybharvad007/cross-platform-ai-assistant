@@ -17,7 +17,8 @@
     "e2e": "npm run e2e -w web",
     "dev": "concurrently -n server,web -c blue,green \"npm run dev -w server\" \"npm run dev -w web\"",
     "fixtures": "tsx packages/protocol/scripts/write-fixtures.ts",
-    "predev": "npm run build -w packages/protocol"
+    "predev": "npm run build -w packages/protocol",
+    "pree2e": "npm run build -w packages/protocol"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.0",

@@ -14,7 +14,12 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew :core:test --no-daemon --stacktrace
-      - run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+      - name: core tests
+        run: ./gradlew :core:test --no-daemon --console=plain 2>&1 | tee core.log; exit ${PIPESTATUS[0]}
+      - name: assemble app
+        run: ./gradlew :app:assembleDebug --no-daemon --console=plain 2>&1 | tee app.log; exit ${PIPESTATUS[0]}
+      - name: surface errors as annotations
+        if: failure()
+        run: grep -hE "^e: |error:|What went wrong|Could not|Unresolved|FAILED" core.log app.log | head -60 | sed 's/^/::error::/' || true
       - uses: actions/upload-artifact@v4
         with: { name: app-debug.apk, path: android/app/build/outputs/apk/debug/app-debug.apk }

@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -54,6 +55,8 @@ class SyncRepository(private val context: Context, private val prefs: Prefs, val
     private var reconnectJob: Job? = null
     private var backoffMs = 500L
     private var wantConnected = false
+    /** Frames are applied strictly in arrival order: event seq must be monotonic. */
+    private val frames = Channel<String>(Channel.UNLIMITED)
 
     private val _state = MutableStateFlow(AssistantState())
     val state: StateFlow<AssistantState> = _state.asStateFlow()
@@ -63,6 +66,10 @@ class SyncRepository(private val context: Context, private val prefs: Prefs, val
     val devices: StateFlow<List<Device>> = _devices.asStateFlow()
     private val _outboxSize = MutableStateFlow(0)
     val outboxSize: StateFlow<Int> = _outboxSize.asStateFlow()
+
+    init {
+        scope.launch { for (text in frames) handleFrame(text) }
+    }
 
     /** Load the cached projection and outbox into a fresh engine. Safe to call repeatedly. */
     suspend fun ensureEngine(): SyncEngine = mutex.withLock {
@@ -97,19 +104,19 @@ class SyncRepository(private val context: Context, private val prefs: Prefs, val
 
     private val listener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) { scope.launch { val e = ensureEngine(); e.onOpen(); backoffMs = 500; flush(e) } }
-        override fun onMessage(webSocket: WebSocket, text: String) {
-            scope.launch {
-                val e = ensureEngine()
-                val frame = runCatching { ProtocolJson.decodeFromString(ServerFrame.serializer(), text) }.getOrElse { Log.w(TAG, "bad frame: ${it.message}"); return@launch }
-                mutex.withLock { e.onFrame(frame) }
-                if (frame is ServerFrame.Error) Log.w(TAG, "server error ${frame.code}: ${frame.message}")
-                flush(e)
-                persist(e)
-                publish(e)
-            }
-        }
+        override fun onMessage(webSocket: WebSocket, text: String) { frames.trySend(text) }
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) = onDrop()
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) { Log.w(TAG, "socket failure: ${t.message}"); onDrop() }
+    }
+
+    private suspend fun handleFrame(text: String) {
+        val e = ensureEngine()
+        val frame = runCatching { ProtocolJson.decodeFromString(ServerFrame.serializer(), text) }.getOrElse { Log.w(TAG, "bad frame: ${it.message}"); return }
+        mutex.withLock { e.onFrame(frame) }
+        if (frame is ServerFrame.Error) Log.w(TAG, "server error ${frame.code}: ${frame.message}")
+        flush(e)
+        persist(e)
+        publish(e)
     }
 
     private fun onDrop() {

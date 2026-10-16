@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
@@ -67,11 +68,13 @@ object DeviceActions {
         if (!granted) return fail("location permission not granted")
         val lm = context.getSystemService(LocationManager::class.java)
         val provider = listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER).firstOrNull { lm.isProviderEnabled(it) } ?: return fail("location disabled")
-        val loc = withTimeoutOrNull(10_000) {
-            suspendCancellableCoroutine { cont ->
-                @Suppress("MissingPermission")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) lm.getCurrentLocation(provider, null, context.mainExecutor) { cont.resume(it) }
-                else cont.resume(lm.getLastKnownLocation(provider))
+        val loc: Location = withTimeoutOrNull(10_000) {
+            suspendCancellableCoroutine<Location?> { cont ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    lm.getCurrentLocation(provider, null, context.mainExecutor) { cont.resume(it) }
+                } else {
+                    cont.resume(lm.getLastKnownLocation(provider))
+                }
             }
         } ?: return fail("location timeout")
         return ok("lat" to JsonPrimitive(loc.latitude), "lon" to JsonPrimitive(loc.longitude), "accuracy" to JsonPrimitive(loc.accuracy))
