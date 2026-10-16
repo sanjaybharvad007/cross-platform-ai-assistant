@@ -23,5 +23,5 @@ COPY --from=build /app/web/dist web/dist
 RUN npm ci --omit=dev --no-audit --no-fund --workspace server --workspace packages/protocol && mkdir -p /data
 EXPOSE 8787
 VOLUME /data
-HEALTHCHECK --interval=30s --timeout=5s CMD wget -qO- http://localhost:8787/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s CMD wget -qO- http://127.0.0.1:8787/health || exit 1
 CMD ["node", "--no-warnings=ExperimentalWarning", "server/dist/main.js"]

@@ -38,7 +38,7 @@ jobs:
           docker image inspect assistant:ci --format 'image {{.Id}} ok'
           docker run -d --name assistant-ci assistant:ci 2> run.err || { sed 's/^/::error::/' run.err; exit 1; }
           sleep 6
-          docker exec assistant-ci wget -qO- http://localhost:8787/health
+          docker exec assistant-ci wget -qO- http://127.0.0.1:8787/health
       - if: failure()
         run: |
           { docker ps -a; docker logs assistant-ci; } 2>&1 | tail -60 | sed 's/^/::error::/' || true
