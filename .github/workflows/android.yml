@@ -15,11 +15,16 @@ jobs:
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v4
       - name: core tests
-        run: ./gradlew :core:test --no-daemon --console=plain 2>&1 | tee core.log; exit ${PIPESTATUS[0]}
+        run: |
+          set -o pipefail
+          ./gradlew :core:test --no-daemon --console=plain 2>&1 | tee core.log
       - name: assemble app
-        run: ./gradlew :app:assembleDebug --no-daemon --console=plain 2>&1 | tee app.log; exit ${PIPESTATUS[0]}
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleDebug --no-daemon --console=plain 2>&1 | tee app.log
       - name: surface errors as annotations
         if: failure()
-        run: grep -hE "^e: |error:|What went wrong|Could not|Unresolved|FAILED" core.log app.log | head -60 | sed 's/^/::error::/' || true
+        run: |
+          grep -hE '^e: |error:|What went wrong|Could not|Unresolved|FAILED' core.log app.log 2>/dev/null | head -60 | sed 's/^/::error::/' || true
       - uses: actions/upload-artifact@v4
         with: { name: app-debug.apk, path: android/app/build/outputs/apk/debug/app-debug.apk }
