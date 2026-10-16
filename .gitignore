@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dev-dist/
+*.db
+*.db-journal
+*.log
+.env
+web/playwright-report/
+web/test-results/
+android/.gradle/
+android/build/
+android/*/build/
+android/local.properties
+android/.idea/
+.DS_Store
+*.tsbuildinfo

@@ -1,0 +1,34 @@
+{
+  "name": "cross-platform-ai-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cross-platform AI assistant: Node.js agent service with LLM tool calling, React web and Kotlin Android clients, event-sourced conversations synchronized across devices with mid-stream resume.",
+  "workspaces": [
+    "packages/protocol",
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "build": "npm run build -w packages/protocol && npm run build -w server && npm run build -w web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint packages server web --max-warnings 0",
+    "test": "vitest run",
+    "e2e": "npm run e2e -w web",
+    "dev": "concurrently -n server,web -c blue,green \"npm run dev -w server\" \"npm run dev -w web\"",
+    "fixtures": "tsx packages/protocol/scripts/write-fixtures.ts",
+    "predev": "npm run build -w packages/protocol"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.0",
+    "@types/node": "^22.0.0",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.30.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "jsdom": "^26.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.0",
+    "typescript-eslint": "^8.35.0",
+    "vitest": "^3.2.0"
+  }
+}
