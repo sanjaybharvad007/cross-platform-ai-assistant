@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Assistant</string>
+    <string name="notification_channel">Assistant updates</string>
+</resources>
