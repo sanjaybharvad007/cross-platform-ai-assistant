@@ -1,0 +1,57 @@
+[
+  {
+    "type": "welcome",
+    "deviceId": "dev_web",
+    "userId": "usr_1",
+    "serverSeq": 11,
+    "devices": [
+      {
+        "id": "dev_web",
+        "name": "Chrome on Mac",
+        "platform": "web",
+        "lastSeenAt": 1760000000000,
+        "online": true
+      },
+      {
+        "id": "dev_android",
+        "name": "Pixel 8",
+        "platform": "android",
+        "lastSeenAt": 1759999995000,
+        "online": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "event": {
+      "seq": 7,
+      "at": 1760000000006,
+      "body": {
+        "type": "message.delta",
+        "conversationId": "conv_1",
+        "messageId": "msg_a1",
+        "delta": "Day 1: Old Town and the lake. "
+      }
+    }
+  },
+  {
+    "type": "synced",
+    "seq": 11
+  },
+  {
+    "type": "ack",
+    "clientMsgId": "c_1",
+    "messageId": "msg_u1",
+    "conversationId": "conv_1"
+  },
+  {
+    "type": "error",
+    "code": "rate_limited",
+    "message": "Too many requests",
+    "clientMsgId": "c_2"
+  },
+  {
+    "type": "pong",
+    "t": 1760000000000
+  }
+]

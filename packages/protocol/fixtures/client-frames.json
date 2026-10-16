@@ -1,0 +1,29 @@
+[
+  {
+    "type": "hello",
+    "since": 0,
+    "protocol": 1
+  },
+  {
+    "type": "send",
+    "conversationId": "conv_1",
+    "clientMsgId": "c_3",
+    "text": "What about day 2?"
+  },
+  {
+    "type": "cancel",
+    "conversationId": "conv_1"
+  },
+  {
+    "type": "device.result",
+    "actionId": "act_1",
+    "ok": true,
+    "result": {
+      "scheduled": true
+    }
+  },
+  {
+    "type": "ping",
+    "t": 1760000000000
+  }
+]

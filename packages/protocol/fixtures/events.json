@@ -1,0 +1,157 @@
+[
+  {
+    "seq": 1,
+    "at": 1760000000000,
+    "body": {
+      "type": "conversation.created",
+      "conversation": {
+        "id": "conv_1",
+        "title": "Trip to Zurich",
+        "createdAt": 1760000000000,
+        "updatedAt": 1760000000000,
+        "archived": false
+      }
+    }
+  },
+  {
+    "seq": 2,
+    "at": 1760000000001,
+    "body": {
+      "type": "message.created",
+      "message": {
+        "id": "msg_u1",
+        "conversationId": "conv_1",
+        "role": "user",
+        "content": "Plan a 2-day trip to Zurich",
+        "deviceId": "dev_web",
+        "clientMsgId": "c_1",
+        "status": "complete",
+        "createdAt": 1760000000001
+      }
+    }
+  },
+  {
+    "seq": 3,
+    "at": 1760000000002,
+    "body": {
+      "type": "message.created",
+      "message": {
+        "id": "msg_a1",
+        "conversationId": "conv_1",
+        "role": "assistant",
+        "content": "",
+        "status": "streaming",
+        "createdAt": 1760000000002
+      }
+    }
+  },
+  {
+    "seq": 4,
+    "at": 1760000000003,
+    "body": {
+      "type": "tool.called",
+      "conversationId": "conv_1",
+      "messageId": "msg_a1",
+      "call": {
+        "id": "call_1",
+        "name": "get_weather",
+        "arguments": {
+          "city": "Zurich"
+        }
+      },
+      "executor": "server"
+    }
+  },
+  {
+    "seq": 5,
+    "at": 1760000000004,
+    "body": {
+      "type": "tool.result",
+      "conversationId": "conv_1",
+      "messageId": "msg_a1",
+      "toolCallId": "call_1",
+      "ok": true,
+      "summary": "12°C, light rain"
+    }
+  },
+  {
+    "seq": 6,
+    "at": 1760000000005,
+    "body": {
+      "type": "task.progress",
+      "conversationId": "conv_1",
+      "messageId": "msg_a1",
+      "step": 1,
+      "total": 3,
+      "label": "Checking weather"
+    }
+  },
+  {
+    "seq": 7,
+    "at": 1760000000006,
+    "body": {
+      "type": "message.delta",
+      "conversationId": "conv_1",
+      "messageId": "msg_a1",
+      "delta": "Day 1: Old Town and the lake. "
+    }
+  },
+  {
+    "seq": 8,
+    "at": 1760000000007,
+    "body": {
+      "type": "device.action",
+      "action": {
+        "id": "act_1",
+        "conversationId": "conv_1",
+        "messageId": "msg_a1",
+        "toolCallId": "call_2",
+        "name": "set_alarm",
+        "arguments": {
+          "hour": 7,
+          "minute": 30,
+          "label": "Train to Zurich"
+        },
+        "targetDeviceId": "dev_android",
+        "expiresAt": 1760000060000
+      }
+    }
+  },
+  {
+    "seq": 9,
+    "at": 1760000000008,
+    "body": {
+      "type": "device.action.done",
+      "actionId": "act_1",
+      "deviceId": "dev_android",
+      "ok": true
+    }
+  },
+  {
+    "seq": 10,
+    "at": 1760000000009,
+    "body": {
+      "type": "message.completed",
+      "conversationId": "conv_1",
+      "messageId": "msg_a1",
+      "status": "complete",
+      "usage": {
+        "input": 812,
+        "output": 140
+      }
+    }
+  },
+  {
+    "seq": 11,
+    "at": 1760000000010,
+    "body": {
+      "type": "conversation.updated",
+      "conversationId": "conv_1",
+      "patch": {
+        "title": "Zurich weekend",
+        "lastDeviceId": "dev_android",
+        "updatedAt": 1760000000010
+      }
+    }
+  }
+]
