@@ -1,0 +1,14 @@
+services:
+  assistant:
+    build: { context: .., dockerfile: deploy/Dockerfile }
+    ports: ["8787:8787"]
+    environment:
+      LLM_PROVIDER: gemini           # gemini | openai | mock
+      LLM_MODEL: gemini-2.5-flash
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-long-random-string}
+      CORS_ORIGIN: "*"
+    volumes: ["assistant-data:/data"]
+    restart: unless-stopped
+volumes:
+  assistant-data:
